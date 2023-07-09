@@ -8,34 +8,9 @@ from google.cloud import aiplatform
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from google.cloud import aiplatform
 
-aiplatform.init(
-    # your Google Cloud Project ID or number
-    # environment default used is not set
-    project='spyrai',
+GOOGLE_APPLICATION_CREDENTIALS="./spyrai-10c4dddb2fc8.json"
 
-    # the Vertex AI region you will use
-    # defaults to us-central1
-    location='us-central1',
-
-    # Google Cloud Storage bucket in same region as location
-    # used to stage artifacts
-    staging_bucket='gs://my_staging_bucket',
-
-    # custom google.auth.credentials.Credentials
-    # environment default creds used if not set
-    credentials="AIzaSyAf9YstQtzv5TC0VpoJ5-_2hOoq-En2vxM",
-
-    # customer managed encryption key resource name
-    # will be applied to all Vertex AI resources if set
-    # encryption_spec_key_name=my_encryption_key_name,
-
-    # the name of the experiment to use to track
-    # logged metrics and parameters
-    experiment='my-experiment',
-
-    # description of the experiment above
-    experiment_description='my experiment decsription'
-)
+with open
 
 st.title('SpyrAI')
 video_url="https://www.youtube.com/watch?v=jRAAaDll34Q&ab_channel=CoreySchafer"
@@ -56,7 +31,7 @@ loader = YoutubeLoader.from_youtube_url(
 docs=loader.load()
 transcribedText=docs[0].page_content
 
-API_KEY=AIzaSyAf9YstQtzv5TC0VpoJ5-_2hOoq-En2vxM
+
 
 #split a transcript
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=150)
@@ -69,6 +44,7 @@ Answer: Let's think step by step."""
 prompt = PromptTemplate(template=template, input_variables=["question"])
 
 llm = VertexAI()
+
 
 llm_chain = LLMChain(prompt=prompt, llm=llm)
 
