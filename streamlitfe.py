@@ -7,8 +7,6 @@ import vertexai
 from vertexai.preview.language_models import ChatModel, InputOutputTextPair
 
 
-
-
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "gcpcred.json"
 # os.environ['GOOGLE_CLOUD_PROJECT'] = 'spyrai'
 
@@ -35,6 +33,18 @@ def fetchVideoSummary(videoName):
         endpoint = json.load(file)
     return endpoint[videoName]
 
+def getResponse(query):
+    vertexai.init(project="vertexai-09011992", location="us-central1")
+    chat_model = ChatModel.from_pretrained("chat-bison@001")
+    parameters = {
+        "temperature": 0.8,
+        "max_output_tokens": 1024,
+        "top_p": 0.8,
+        "top_k": 40
+    }
+    chat = chat_model.start_chat(
+    context="
+
 
 st.title("Vertex AI Hackathon")
 
@@ -43,15 +53,11 @@ with st.sidebar:
     st.divider()
     radio_input = st.radio("Video list", ["Python OOP Tutorial 1: Classes and Instances","Python OOP Tutorial 2: Class Variables","Python OOP Tutorial 3: Classmethods and Staticmethods","Python OOP Tutorial 4: Inheritance - Creating Subclasses","Python OOP Tutorial 5: Special (Magic/Dunder) Methods","Python OOP Tutorial 6: Property Decorators - Getters, Setters, and Deleters"],)
 
-c1, c2 = st.columns([0.8,0.2], gap="medium")
 
-
-with c1.container():
-    videoPlaceholder = st.empty()
-    st.text_input("Chat with me")
-
-with c2:
-    summaryPlaceholder = st.empty()
+videoPlaceholder = st.empty()
+a = st.chat_input("Query?")
+responsePlaceholder = st.empty()
+summaryPlaceholder = st.empty()
 
 q = videoMapper(radio_input)
 print(videoMapper(radio_input))
@@ -61,4 +67,8 @@ with videoPlaceholder.container():
     st.video(v)
 
 with summaryPlaceholder.container():
+    st.subheader("Summary")
     st.write(fetchVideoSummary(q))
+
+if a:
+    print(a)
