@@ -28,6 +28,12 @@ def fetchVideoStreamignEndpoint(videoName):
     with open("streamingendpoints.json", "r") as file:
         endpoint = json.load(file)
         print(endpoint[videoName])
+    return endpoint[videoName]
+
+def fetchVideoSummary(videoName):
+    with open("summarization.json", "r") as file:
+        endpoint = json.load(file)
+    return endpoint[videoName]
 
 
 st.title("Vertex AI Hackathon")
@@ -37,10 +43,22 @@ with st.sidebar:
     st.divider()
     radio_input = st.radio("Video list", ["Python OOP Tutorial 1: Classes and Instances","Python OOP Tutorial 2: Class Variables","Python OOP Tutorial 3: Classmethods and Staticmethods","Python OOP Tutorial 4: Inheritance - Creating Subclasses","Python OOP Tutorial 5: Special (Magic/Dunder) Methods","Python OOP Tutorial 6: Property Decorators - Getters, Setters, and Deleters"],)
 
+c1, c2 = st.columns([0.8,0.2], gap="medium")
+
+
+with c1.container():
+    videoPlaceholder = st.empty()
+    st.text_input("Chat with me")
+
+with c2:
+    summaryPlaceholder = st.empty()
+
 q = videoMapper(radio_input)
 print(videoMapper(radio_input))
-fetchVideoStreamignEndpoint(q)
+v = fetchVideoStreamignEndpoint(q)
 
-videoPlaceholder = st.empty()
+with videoPlaceholder.container():
+    st.video(v)
 
-st.text_input("Chat with me")
+with summaryPlaceholder.container():
+    st.write(fetchVideoSummary(q))
