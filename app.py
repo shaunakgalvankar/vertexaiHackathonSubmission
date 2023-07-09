@@ -12,11 +12,14 @@ from google.cloud import aiplatform
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from google.cloud import aiplatform
 
+
+
+
+
 st.title('SpyrAI')
-video_url="https://www.youtube.com/watch?v=jRAAaDll34Q&ab_channel=CoreySchafer"
-video_file=open('../Videos/Tutorial_1.mp4','rb')
-video_bytes=video_file.read()
-st.video(video_bytes, start_time=0)
+video_url="https://www.youtube.com/watch?v=jCzT9XFZ5bw&ab_channel=CoreySchafer"
+
+st.video(video_url, start_time=0)
 
 
 sidebar = st.sidebar.selectbox(
@@ -31,25 +34,30 @@ loader = YoutubeLoader.from_youtube_url(
 
 docs=loader.load()
 transcribedText=docs[0].page_content
+transcripts={"Tutorial_6.mp4":transcribedText}
+print(transcripts)
+with open('transcripts6.json', 'w') as fp:
+    json.dump(transcripts, fp)
 
 
 
-#split a transcript
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=150)
-splits = text_splitter.split_text(transcribedText)
 
-template = """Question: {question}
+# #split a transcript
+# text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=150)
+# splits = text_splitter.split_text(transcribedText)
 
-Answer: Let's think step by step."""
+# template = """Question: {question}
 
-prompt = PromptTemplate(template=template, input_variables=["question"])
+# Answer: Let's think step by step."""
 
-llm = VertexAI()
+# prompt = PromptTemplate(template=template, input_variables=["question"])
+
+# llm = VertexAI()
 
 
-llm_chain = LLMChain(prompt=prompt, llm=llm)
+# llm_chain = LLMChain(prompt=prompt, llm=llm)
 
-question = "What NFL team won the Super Bowl in the year Justin Beiber was born?"
+# question = "What NFL team won the Super Bowl in the year Justin Beiber was born?"
 
-llm_chain.run(question)
+# llm_chain.run(question)
 
