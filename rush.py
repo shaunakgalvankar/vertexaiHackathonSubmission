@@ -1,28 +1,21 @@
 import vertexai
-from vertexai.preview.language_models import ChatModel, InputOutputTextPair
+from vertexai.language_models import TextGenerationModel
+from google.oauth2 import service_account
+import json
+from vertexai.preview.language_models import ChatModel,InputOutputTextPair
 
-import streamlit as st
+with open ("credentials.json") as file:
+    service_accountInfo=json.load(file)
 
-
-def generateQuery(query):
-    vertexai.init(project="", location="us-central1")
-    chat_model = ChatModel.from_pretrained("chat-bison@001")
-    parameters = {
-        "temperature": 0.2,
-        "max_output_tokens": 1024,
-        "top_p": 0.8,
-            "top_k": 40
-    }
-    chat = chat_model.start_chat(
-        context=query,
-    )
-    response = chat.send_message(query, **parameters)
-    print(f"Response from Model: {response.text}")
-    return response.text
-
-
-question = st.text_input("Chat with me")
-
-if question:
-    ans = generateQuery(question)
-    st.write(ans)
+myCredentials=service_account.Credentials.from_service_account_info(service_accountInfo)
+vertexai.init(project="spyrai", location="us-central1",credentials=myCredentials)
+chat_model = ChatModel.from_pretrained("chat-bison@001")
+parameters = {
+    "temperature": 0.2,
+    "max_output_tokens": 256,
+    "top_p": 0.8,
+    "top_k": 40
+}
+chat = chat_model.start_chat()
+response = chat.send_message("""hello""", **parameters)
+print(f"Response from Model: {response.text}")
