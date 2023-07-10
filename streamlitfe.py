@@ -1,5 +1,4 @@
 import streamlit as st
-
 import google.auth
 import os
 import json
@@ -7,8 +6,8 @@ import vertexai
 from vertexai.preview.language_models import ChatModel, InputOutputTextPair
 
 
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "gcpcred.json"
-# os.environ['GOOGLE_CLOUD_PROJECT'] = 'spyrai'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "gcpcred.json"
+os.environ['GOOGLE_CLOUD_PROJECT'] = 'spyrai'
 
 def videoMapper(name):
     videoMap = {
@@ -17,15 +16,14 @@ def videoMapper(name):
         "Python OOP Tutorial 3: Classmethods and Staticmethods": "Tutorial_3",
         "Python OOP Tutorial 4: Inheritance - Creating Subclasses": "Tutorial_4",
         "Python OOP Tutorial 5: Special (Magic/Dunder) Methods": "Tutorial_5",
-        "PPython OOP Tutorial 6: Property Decorators - Getters, Setters, and Deleters": "Tutorial_6",
+        "Python OOP Tutorial 6: Property Decorators - Getters, Setters, and Deleters": "Tutorial_6",
         }
-    
+    print(videoMap[name])
     return videoMap[name]
 
 def fetchVideoStreamignEndpoint(videoName):
     with open("streamingendpoints.json", "r") as file:
         endpoint = json.load(file)
-        print(endpoint[videoName])
     return endpoint[videoName]
 
 def fetchVideoSummary(videoName):
@@ -33,8 +31,13 @@ def fetchVideoSummary(videoName):
         endpoint = json.load(file)
     return endpoint[videoName]
 
-def getResponse(query):
-    vertexai.init(project="vertexai-09011992", location="us-central1")
+def fetchVideoTranscript(videoName):
+    with open("transcripts.json", "r") as file:
+        endpoint = json.load(file)
+    return endpoint[videoName]
+
+def getResponse(query, videoname):
+    vertexai.init(project="spyrai", location="us-central1")
     chat_model = ChatModel.from_pretrained("chat-bison@001")
     parameters = {
         "temperature": 0.8,
@@ -42,8 +45,18 @@ def getResponse(query):
         "top_p": 0.8,
         "top_k": 40
     }
+
+    prompt = "Here is video transcript, I will ask question pertaining to it. Please ,make sure to answer only from transcript data and not general"
+    transcrpit = fetchVideoTranscript(videoname)
+
     chat = chat_model.start_chat(
-    context="
+    
+    context=prompt + transcrpit
+    )
+    response = chat.send_message(query, **parameters)
+    print(f"{response.text}")
+    with st.chat_message("🤖"):
+        st.write("\n" + response.text)
 
 
 st.title("Vertex AI Hackathon")
@@ -60,7 +73,6 @@ responsePlaceholder = st.empty()
 summaryPlaceholder = st.empty()
 
 q = videoMapper(radio_input)
-print(videoMapper(radio_input))
 v = fetchVideoStreamignEndpoint(q)
 
 with videoPlaceholder.container():
@@ -71,4 +83,4 @@ with summaryPlaceholder.container():
     st.write(fetchVideoSummary(q))
 
 if a:
-    print(a)
+    getResponse(a,q)
