@@ -46,8 +46,12 @@ def getResponse(query, videoname):
         "top_k": 40
     }
 
+    prompt = "Here is video transcript, I will ask question pertaining to it. Please ,make sure to answer only from transcript data and not general"
+    transcrpit = fetchVideoTranscript(videoname)
+
     chat = chat_model.start_chat(
-    context=fetchVideoTranscript(videoname)
+    
+    context=prompt + transcrpit
     )
     response = chat.send_message(query, **parameters)
     print(f"{response.text}")
