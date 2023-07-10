@@ -22,9 +22,8 @@ def videoMapper(name):
     return videoMap[name]
 
 def fetchVideoStreamignEndpoint(videoName):
-    with open("streamingendpoints.json", "r") as file:
-        endpoint = json.load(file)
-    return endpoint[videoName]
+    endpoint = "./videos/" + videoName + ".mp4"
+    return endpoint
 
 def fetchVideoSummary(videoName):
     with open("summarization.json", "r") as file:
@@ -59,7 +58,7 @@ def getResponse(query, videoname):
         st.write("\n" + response.text)
 
 
-st.title("Vertex AI Hackathon")
+st.title("SpyrAI")
 
 with st.sidebar:
     st.write("# Videos by Corey Schafer")
@@ -68,19 +67,19 @@ with st.sidebar:
 
 
 videoPlaceholder = st.empty()
-a = st.chat_input("Query?")
+query = st.chat_input("Query?")
 responsePlaceholder = st.empty()
 summaryPlaceholder = st.empty()
 
-q = videoMapper(radio_input)
-v = fetchVideoStreamignEndpoint(q)
+selectedVideo = videoMapper(radio_input)
+videoEndpoint = fetchVideoStreamignEndpoint(selectedVideo)
 
 with videoPlaceholder.container():
-    st.video(v)
+    st.video(videoEndpoint)
 
 with summaryPlaceholder.container():
     st.subheader("Summary")
-    st.write(fetchVideoSummary(q))
+    st.write(fetchVideoSummary(selectedVideo))
 
-if a:
-    getResponse(a,q)
+if query:
+    getResponse(query,selectedVideo)
